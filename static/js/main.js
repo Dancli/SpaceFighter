@@ -1,3 +1,4 @@
+import EnemyGroup from "./enemy.js";
 import LaserGroup from "./player-laser.js";
 import Player from "./player.js";
 
@@ -9,6 +10,8 @@ class MainScene extends Phaser.Scene {
         this.background; // jshint ignore:line
         this.player; // jshint ignore:line
         this.lasers; // jshint ignore:line
+        this.enemies; // jshint ignore:line
+        this.enemyLasers; // jshint ignore:line
         this.cursors; // jshint ignore:line
         this.qKey; // jshint ignore:line
     }
@@ -32,6 +35,8 @@ class MainScene extends Phaser.Scene {
 
         this.lasers = new LaserGroup(this);
 
+        this.enemies = new EnemyGroup(this);
+
         this.cursors = this.input.keyboard.createCursorKeys();
         this.qKey = this.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.Q
@@ -47,7 +52,7 @@ class MainScene extends Phaser.Scene {
         
         // Cursors
         if (Phaser.Input.Keyboard.JustDown(this.qKey)) {
-            this.lasers.fireLaser(this.player.x, this.player.y);
+            this.lasers.fireLaser(this.player.x, this.player.y - 21.5);
         } if (this.cursors.up.isDown) {
             this.player.up();
         } if (this.cursors.down.isDown) {
@@ -67,6 +72,7 @@ class MainScene extends Phaser.Scene {
         } if (this.player.body.velocity.x === 0 && this.player.body.velocity.y === 0) {
             this.player.idle();
         }
+
     }
 }
 
@@ -77,7 +83,7 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: false,
+            debug: true,
             gravity: { y: 0 }
         }
     },
