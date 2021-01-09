@@ -47,6 +47,10 @@ class EnemyLaserGroup extends Phaser.Physics.Arcade.Group {
             enemyLaser.fire(x, y);
         }
     }
+
+    enemyLaserHit() {
+        console.log("You were hit by an enemy laser");
+    }
 }
 
 export default EnemyLaserGroup;

@@ -46,9 +46,9 @@ class MainScene extends Phaser.Scene {
 
         this.enemyLasers = new EnemyLaserGroup(this);
 
-        // this.physics.add.collider(this.player, this.enemies, killPLayer);
-        // this.physics.add.collider(this.player, this.enemyLasers, killPlayer);
-        // this.physics.add.collider(this.enemies, this.lasers, killEnemy);
+        this.physics.add.collider(this.player, this.enemies, this.enemies.enemyHit(), null, this);
+        this.physics.add.collider(this.player, this.enemyLasers, this.enemyLasers.enemyLaserHit(), null, this);
+        this.physics.add.collider(this.enemies, this.lasers, this.lasers.laserHit(), null, this);
 
         this.cursors = this.input.keyboard.createCursorKeys();
         // Due to key ghosting on certain keyboards (like the one I use), the Q key is the one I chose for the player to shoot.
