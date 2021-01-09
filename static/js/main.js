@@ -1,4 +1,5 @@
 import EnemyGroup from "./enemy.js";
+import EnemyLaserGroup from "./enemy-laser.js";
 import LaserGroup from "./player-laser.js";
 import Player from "./player.js";
 
@@ -7,13 +8,18 @@ class MainScene extends Phaser.Scene {
     constructor() {
         super();
 
-        this.background; // jshint ignore:line
-        this.player; // jshint ignore:line
-        this.lasers; // jshint ignore:line
-        this.enemies; // jshint ignore:line
-        this.enemyLasers; // jshint ignore:line
-        this.cursors; // jshint ignore:line
-        this.qKey; // jshint ignore:line
+        // jshint ignore:start
+        this.background;
+        this.player;
+        this.lasers;
+        this.enemies;
+        this.enemyLasers;
+        this.cursors;
+        this.qKey;
+        this.txt_score;
+        // jshint ignore:end
+        this.timer = 0;
+        this.spawnTime = 3000;
     }
 
     preload() {
@@ -36,21 +42,41 @@ class MainScene extends Phaser.Scene {
         this.lasers = new LaserGroup(this);
 
         this.enemies = new EnemyGroup(this);
+        this.enemies.enemyAnimations();
+
+        this.enemyLasers = new EnemyLaserGroup(this);
+
+        // this.physics.add.collider(this.player, this.enemies, killPLayer);
+        // this.physics.add.collider(this.player, this.enemyLasers, killPlayer);
+        // this.physics.add.collider(this.enemies, this.lasers, killEnemy);
 
         this.cursors = this.input.keyboard.createCursorKeys();
+        // Due to key ghosting on certain keyboards (like the one I use), the Q key is the one I chose for the player to shoot.
         this.qKey = this.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.Q
         );
 
     }
 
-    update() {
+    update(time, delta) {
 
-        this.background.tilePositionY -= 3;
+        this.background.tilePositionY -= 2;
+
+        // Enemies will spawn on an accelerated rate, until it reaches 1 enemy per second.
+        this.timer += delta;
+        while(this.timer > this.spawnTime) {
+            this.enemies.addEnemy(this.enemyLasers);
+            this.timer -= this.spawnTime;
+            if(this.spawnTime < 1000) {
+                this.spawnTime = 1000;
+            } else {
+                this.spawnTime -= 125;
+            }
+        }
         
         this.player.setVelocity(0);
         
-        // Cursors
+        // These are the player's controls.
         if (Phaser.Input.Keyboard.JustDown(this.qKey)) {
             this.lasers.fireLaser(this.player.x, this.player.y - 21.5);
         } if (this.cursors.up.isDown) {
@@ -72,7 +98,6 @@ class MainScene extends Phaser.Scene {
         } if (this.player.body.velocity.x === 0 && this.player.body.velocity.y === 0) {
             this.player.idle();
         }
-
     }
 }
 

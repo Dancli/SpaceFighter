@@ -6,6 +6,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.scene = scene;
     }
 
+    // Adds a player to the game.
     add() {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
@@ -13,6 +14,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds(true);
     }
     
+    // These are the animations used by the player's sprite.
     animations() {
         this.scene.anims.create({
             key: 'idle',
@@ -68,6 +70,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             frameRate: 10
         });
     }
+
+    // The following methods will cover all of the 9 directions the player can take.
 
     up() {
         this.setVelocityY(-200);
