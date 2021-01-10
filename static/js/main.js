@@ -1,6 +1,6 @@
 import EnemyGroup from "./enemy.js";
 import EnemyLaserGroup from "./enemy-laser.js";
-import LaserGroup from "./player-laser.js";
+import LaserGroup from "./laser.js";
 import Player from "./player.js";
 
 class MainScene extends Phaser.Scene {
@@ -20,6 +20,8 @@ class MainScene extends Phaser.Scene {
         // jshint ignore:end
         this.timer = 0;
         this.spawnTime = 3000;
+        this.score = 0;
+        this.gameOver = false;
     }
 
     preload() {
@@ -46,12 +48,23 @@ class MainScene extends Phaser.Scene {
 
         this.enemyLasers = new EnemyLaserGroup(this);
 
-        this.physics.add.collider(this.player, this.enemies, this.enemies.enemyHit(), null, this);
-        this.physics.add.collider(this.player, this.enemyLasers, this.enemyLasers.enemyLaserHit(), null, this);
-        this.physics.add.collider(this.enemies, this.lasers, this.lasers.laserHit(), null, this);
+        this.physics.add.collider(this.enemies, this.lasers, function(enemy, laser) {
+            enemy.disableBody(true, true);
+            laser.disableBody(true, true);
+            this.score += 1;
+        });
+
+        this.physics.add.collider(this.player, this.enemies, function() {
+            this.gameOver = true;
+            console.log("Game Over Scene");
+        });
+        this.physics.add.collider(this.player, this.enemyLasers, function() {
+            this.gameOver = true;
+            console.log("Game Over Scene");
+        });
 
         this.cursors = this.input.keyboard.createCursorKeys();
-        // Due to key ghosting on certain keyboards (like the one I use), the Q key is the one I chose for the player to shoot.
+        // Due to key ghosting on certain keyboards, the Q key is the one I chose for the player to shoot.
         this.qKey = this.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.Q
         );
@@ -62,7 +75,7 @@ class MainScene extends Phaser.Scene {
 
         this.background.tilePositionY -= 2;
 
-        // Enemies will spawn on an accelerated rate, until it reaches 1 enemy per second.
+        // Enemies will spawn on an accelerated rate, until it reaches the rate of 1 enemy per second.
         this.timer += delta;
         while(this.timer > this.spawnTime) {
             this.enemies.addEnemy(this.enemyLasers);

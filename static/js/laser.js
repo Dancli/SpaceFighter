@@ -3,22 +3,29 @@ class Laser extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
         super(scene, x, y, 'laser');
     }
-
-    // This method activates the laser.
+    /*
+        The player can shoot lasers to beat down enemies.
+        Lasers will follow a straight pattern towards the top of the screen from the position the player is.
+        Only 5 lasers are allowed to exist in the screen, but they will be reloaded again as they leave.
+    */
     fire(x, y) {
         this.body.reset(x, y);
-        this.setActive(true);
-        this.setVisible(true);
+        this.enableBody(
+            true,
+            x,
+            y,
+            true,
+            true
+        );
         this.setVelocityY(-400);
     }
 
-    // Fired lasers will be set inactive once they reach the end of the screen.
+    // Lasers will disappear once they reach the very top of the screen.
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
 
         if(this.y <= 0) {
-            this.setActive(false);
-            this.setVisible(false);
+            this.disableBody(true, true);
         }
     }
 }
@@ -35,21 +42,21 @@ class LaserGroup extends Phaser.Physics.Arcade.Group {
             frameQuantity: 5,
             active: false,
             visible: false,
-            repeat: -1
+            repeat: -1,
+            setXY: {
+                x: -200,
+                y: -100
+            },
             }
         );
     }
 
-    // Allows each member of the laser group to use the fire method of the Laser class.
+    // Allows each member of the pool to move at high speeds accross the screen towards the top.
     fireLaser(x, y) {
         const laser = this.getFirstDead(false);
         if (laser) {
             laser.fire(x, y);
         }
-    }
-
-    laserHit() {
-        console.log("You hit an enemy with a laser");
     }
 }
 

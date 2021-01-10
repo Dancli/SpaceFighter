@@ -4,21 +4,29 @@ class EnemyLaser extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, 'enemy-laser');
     }
 
-    // This method activates the enemy laser.
+    /*
+        Enemies will fire lasers in order to defeat the player.
+        Enemy lasers work the same way as the ones used by the player, but they move slower and in the opposite direction.
+        Lasers will respawn over again.
+    */
     fire(x, y) {
         this.body.reset(x, y);
-        this.setActive(true);
-        this.setVisible(true);
-        this.setVelocityY(250);
+        this.enableBody(
+            true,
+            x,
+            y,
+            true,
+            true
+        );
+        this.setVelocityY(240);
     }
 
-    // Fired enemy lasers will be set inactive once they reach the end of the screen.
+    // Enemy lasers will disappear once they reach the bottom of the screen.
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
 
         if(this.y >= 640) {
-            this.setActive(false);
-            this.setVisible(false);
+            this.disableBody(true, true);
         }
     }
 }
@@ -32,24 +40,24 @@ class EnemyLaserGroup extends Phaser.Physics.Arcade.Group {
             {
             classType: EnemyLaser,
             key: 'enemy-laser',
-            frameQuantity: 100,
+            frameQuantity: 35,
             active: false,
             visible: false,
+            setXY: {
+                x: -200,
+                y: -200
+            },
             repeat: -1
             }
         );
     }
 
-    // Allows each member of the enemy laser group to use the fire method of the EnemyLaser class.
+    // Allows each member of the pool to move at medium speeds accross the screen towards the bottom.
     fireLaser(x, y) {
         const enemyLaser = this.getFirstDead(false);
         if (enemyLaser) {
             enemyLaser.fire(x, y);
         }
-    }
-
-    enemyLaserHit() {
-        console.log("You were hit by an enemy laser");
     }
 }
 
