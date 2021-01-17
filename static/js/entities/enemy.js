@@ -12,21 +12,22 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         5 seconds after respawn, enemies will stop firing. 
         Dead (invisible) enemies will stop firing.
     */
-    fire(enemyLasers) {
-        let delay = 500;
-        const delayFire = () => {
-            if (this.visible == true) {
-                enemyLasers.fireLaser(this.x, this.y + 21.5);
-                return;
-            } else {
-                delay = 500;
-            }
-        };
-        while (delay < 5000) {
-            this.scene.time.delayedCall(delay, delayFire, [], this.scene);
-            delay += 1500;
+   fire(enemyLasers) {
+    const delayFire = () => {
+        if (this.visible == true) {
+            enemyLasers.fireLaser(this.x, this.y + 21.5);
+        } else {
+            this.scene.time.removeEvent(timerEvent);
         }
+    };
+    let timerDelay = 500;
+    let timerEvent;
+    while (timerDelay < 5000) {
+        timerEvent = this.scene.time.delayedCall(timerDelay, delayFire, [], this.scene);
+        timerDelay += 1500;
     }
+    
+}
 
     /* 
         Enemies will appear in a random horizontal position from the top of the screen. 
